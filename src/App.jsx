@@ -6,26 +6,34 @@ import { Section } from './components/Section/Section';
 import { Notification } from 'components/Notification/Notification';
 
 export const App = () => {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const feedbackOptions = { good, neutral, bad };
+  const total = good + neutral + bad;
 
   const leaveFeedback = feedback => {
-    setFeedback(prevState => {
-      const value = prevState[feedback];
-      return { ...prevState, [feedback]: value + 1 };
-    });
+    switch (feedback) {
+      case 'good':
+        setGood(good + 1);
+        break;
+      case 'neutral':
+        setNeutral(neutral + 1);
+        break;
+      case 'bad':
+        setBad(bad + 1);
+        break;
+      default:
+        return;
+    }
   };
-
-  const total = feedback.good + feedback.neutral + feedback.bad;
 
   const countPositivePercent = () => {
     if (!total) {
       return 0;
     }
-    const result = ((feedback.good / total) * 100).toFixed(2);
+    const result = ((good / total) * 100).toFixed(2);
     return Number(result);
   };
 
@@ -33,7 +41,7 @@ export const App = () => {
     <>
       <Section title="Please leave feedback">
         <FeedbackOptions
-          options={Object.keys(feedback)}
+          options={Object.keys(feedbackOptions)}
           onLeaveFeedback={leaveFeedback}
         ></FeedbackOptions>
       </Section>
@@ -41,9 +49,9 @@ export const App = () => {
       {total !== 0 && (
         <Section title="Statistics">
           <Statistics
-            good={feedback.good}
-            neutral={feedback.neutral}
-            bad={feedback.bad}
+            good={good}
+            neutral={neutral}
+            bad={bad}
             total={total}
             positivePercentage={countPositivePercent()}
           />
